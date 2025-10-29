@@ -9,7 +9,8 @@ CREATE TABLE Users (
     user_id INT IDENTITY(1,1) PRIMARY KEY,
     name VARCHAR(100),
     email VARCHAR(100) UNIQUE,
-    phone_number VARCHAR(20)
+    phone_number VARCHAR(20),
+    password VARCHAR(MAX) NOT NULL
 );
 GO
 
@@ -62,3 +63,5 @@ INSERT INTO Comments (comment_name, todo_id, user_id) VALUES
 ('I’ll bring the meeting notes.', 4, 5),
 ('Check the accuracy metrics before finalizing.', 5, 1);
 GO
+
+DROP TABLE Users;

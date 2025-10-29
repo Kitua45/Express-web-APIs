@@ -1,6 +1,7 @@
-import { Request, Response} from "express"
+import { Request, Response, NextFunction } from "express"
 import {getPool } from "../db/config"
 import * as todoServices from '../services/todo.service'
+
 
 
 export const getTodos = async (req: Request, res: Response) => {
@@ -100,4 +101,8 @@ export const updateTodo = async (req: Request, res: Response) => {
 
 
 
+
+export function getAllTodosController(arg0: string, isAuthenticated: (req: Request, res: Response, next: NextFunction) => void, getAllTodosController: any) {
+    throw new Error("Function not implemented.")
+}
 // duplicate stub removed

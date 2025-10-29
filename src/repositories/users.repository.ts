@@ -18,8 +18,9 @@ export const getUserById = async (id: number): Promise<User[]> => {
     return result.recordset[0];
 };
 
-//create new user -user: any changed to user: NewUser
-export const createUser = async (user: NewUser) => {
+//create user using password
+
+export const createUserWithPassword = async (user: NewUser) => {
     const pool = await getPool();
     await pool
         .request()
@@ -27,7 +28,8 @@ export const createUser = async (user: NewUser) => {
         .input('last_name', user.last_name)
         .input('email', user.email)
         .input('phone_number', user.phone_number)
-        .query('INSERT INTO Users (first_name, last_name,email, phone_number) VALUES (@first_name, @last_name,@email, @phone_number)');
+        .input('password', user.password)  // This is now hashed
+        .query('INSERT INTO Users (first_name, last_name,email, phone_number, password) VALUES (@first_name, @last_name,@email, @phone_number, @password)');
     return { message: 'User created successfully' };
 }
 
@@ -62,4 +64,28 @@ export const deleteUser = async (id: number) => {
         .input('id', id)
         .query('DELETE FROM Users WHERE userid = @id');
     return { message: 'User deleted successfully' };
+}
+
+//create user using password
+// src/repositories/user.repository.ts
+export const createUser = async (user: NewUser) => {
+    const pool = await getPool();
+    await pool
+        .request()
+        .input('first_name', user.first_name)
+        .input('last_name', user.last_name)
+        .input('email', user.email)
+        .input('phone_number', user.phone_number)
+        .input('password', user.password)  // This is now hashed
+        .query('INSERT INTO Users (first_name, last_name,email, phone_number, password) VALUES (@first_name, @last_name,@email, @phone_number, @password)');
+    return { message: 'User created successfully' };
+}
+// src/repositories/user.repository.ts
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+    const pool = await getPool();
+    const result = await pool
+        .request()
+        .input('email', email)
+        .query('SELECT * FROM Users WHERE email = @email');
+    return result.recordset[0] || null;
 }
