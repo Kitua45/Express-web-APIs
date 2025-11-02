@@ -22,7 +22,7 @@ export const getUserById = async (id: number) => {
 
 //create user using password
 
-export const createUserWithPassword = async (user: NewUser) => {
+export const createUser = async (user: NewUser) => {
     const pool = await getPool();
     await pool
         .request()
@@ -64,13 +64,44 @@ export const deleteUser = async (id: number) => {
     await pool
         .request()
         .input('id', id)
-        .query('DELETE FROM Users WHERE userid = @id');
+        .query('DELETE FROM Users WHERE user_id = @id');
     return { message: 'User deleted successfully' };
 }
 
 
 
 export const getUserByEmail = async (email: string): Promise<User | null> => {
+    const pool = await getPool();
+    const result = await pool
+        .request()
+        .input('email', email)
+        .query('SELECT * FROM Users WHERE email = @email');
+    return result.recordset[0] || null;
+}
+
+// Set verification code for a user
+export const setVerificationCode = async (email: string, code: string) => {
+    const pool = await getPool();
+    await pool
+        .request()
+        .input('email', email)
+        .input('code', code)
+        .query('UPDATE Users SET verification_code = @code, is_verified = 0 WHERE email = @email');
+    return { message: 'Verification code saved' };
+}
+
+// Verify user by setting is_verified to true
+export const verifyUser = async (email: string) => {
+    const pool = await getPool();
+    await pool
+        .request()
+        .input('email', email)
+        .query('UPDATE Users SET is_verified = 1, verification_code = NULL WHERE email = @email');
+    return { message: 'User verified successfully' };
+};
+
+// Get user by email - used for verification lookup
+export const getUserbyEmail = async (email: string): Promise<User | null> => {
     const pool = await getPool();
     const result = await pool
         .request()

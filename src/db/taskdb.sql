@@ -92,4 +92,9 @@ DBCC CHECKIDENT ('Users', RESEED, 0);
 DBCC CHECKIDENT ('Todos', RESEED, 0);
 DBCC CHECKIDENT ('Comments', RESEED, 0);
 
+-- Add verification columns to existing Users table
+ALTER TABLE Users
+ADD verification_code VARCHAR(10),
+    is_verified BIT DEFAULT 0;
+
 

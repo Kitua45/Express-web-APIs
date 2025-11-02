@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import * as userServices from '../services/user.service'
 
+
 //get all users
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
@@ -33,7 +34,7 @@ export const getUserById = async (req: Request, res: Response) => {
 export const createUser = async (req: Request, res: Response) => {
     const user = req.body;
     try {
-        const result = await userServices.createUser(user);
+        const result = await userServices.createUserWithVerification(user);
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ error: error.message });
@@ -97,3 +98,18 @@ export const loginUser = async (req: Request, res: Response) => {
         }
     }
 }
+
+export const verifyUser = async (req: Request, res: Response) => {
+    try {
+        const { email, code } = req.body;
+    
+        if (!email || !code) {
+            return res.status(400).json({ message: 'Email and verification code are required' });
+        }
+
+        const result = await userServices.verifyUserEmail(email, code);
+        res.status(200).json(result);
+    } catch (error: any) {
+        res.status(400).json({ message: error.message });
+    }
+};

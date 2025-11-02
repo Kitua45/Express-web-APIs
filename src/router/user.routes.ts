@@ -13,6 +13,16 @@ const userRoutes = (app: Express) => {
 
     
 
+     // Existing routes
+    app.post("/users", userController.createUser);
+    app.post("/login", userController.loginUser);
+  
+    // New verification route
+    app.post("/users/verify", userController.verifyUser);
+    app.post("/users/register", userController.createUser);
+
+
+
      
 }
 

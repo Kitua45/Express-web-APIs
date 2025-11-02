@@ -5,7 +5,9 @@ export interface User {
     email: string;
     phone_number: string;
     password: string;
-    role: string;
+    role: "admin" | "user";
+     is_verified?: boolean; // new field to track if user is verified
+    verification_code?: string | null; // new field to store verification code
 }
 
 export interface NewUser {
@@ -14,7 +16,9 @@ export interface NewUser {
     email: string;
     phone_number: string;
     password: string;
-    role?: string;
+     role: "admin" | "user";
+     is_verified?: boolean; // new field to track if user is verified
+    verification_code?: string | null; // new field to store verification code
 }
 
 // update user type
@@ -23,6 +27,6 @@ export interface UpdateUser {
     last_name?: string;
     phone_number?: string;
     password: string;
-    role?: string;
+     role: "admin" | "user";
 }
 
