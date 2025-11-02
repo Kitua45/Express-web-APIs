@@ -1,5 +1,5 @@
 import * as userRepositories from '../repositories/users.repository'
-import { NewUser, UpdateUser, User } from '../Types/User.type';
+import { NewUser, UpdateUser } from '../Types/User.type';
 
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
@@ -12,7 +12,7 @@ export const createUser = async (user: NewUser) => {
         user.password = await bcrypt.hash(user.password, 10);  // 10 = salt rounds
         console.log(user.password);  // Shows hashed password
     }
-    return await userRepositories.createUser(user);
+    return await userRepositories.createUserWithPassword(user);
 }
 
 
@@ -81,6 +81,7 @@ export const loginUser = async (email: string, password: string) => {
         sub: user.userid,        // Subject (user ID)
         first_name: user.first_name,
         last_name: user.last_name,
+        role: user.role,
         exp: Math.floor(Date.now() / 1000) + (60 * 60), // 1 hour expiration
     }
 
@@ -99,6 +100,49 @@ export const loginUser = async (email: string, password: string) => {
             last_name: user.last_name,
             email: user.email,
             phone_number: user.phone_number
+        }
+    }
+}
+
+// Authorization by roles
+// In user.service.ts - loginUser function
+export const LoginUser = async (email: string, password: string) => {
+    // Find user by email
+    const user = await userRepositories.getUserByEmail(email);
+    if (!user) {
+        throw new Error('User not found');
+    }
+  
+    // Verify password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        throw new Error('Invalid credentials');
+    }
+
+    // Create JWT payload - IMPORTANT: Include user.role
+    const payload = {
+        sub: user.userid,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,  //  This is crucial for role-based auth
+        exp: Math.floor(Date.now() / 1000) + (60 * 60), // 1 hour expiration
+    }
+
+    // Generate JWT token
+    const secret = process.env.JWT_SECRET as string;
+    if (!secret) throw new Error('JWT secret not defined');
+    const token = jwt.sign(payload, secret);
+
+    return {
+        message: 'Login successful',
+        token,
+        user: {
+            userid: user.userid,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            phone_number: user.phone_number,
+            role: user.role  // Also return role in response
         }
     }
 }

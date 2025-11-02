@@ -11,6 +11,8 @@ const userRoutes = (app: Express) => {
     app.delete("/users/:id", userController.deleteUser);
     app.post("/login", userController.loginUser);  //login
 
+    
+
      
 }
 

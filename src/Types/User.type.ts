@@ -5,6 +5,7 @@ export interface User {
     email: string;
     phone_number: string;
     password: string;
+    role: string;
 }
 
 export interface NewUser {
@@ -13,6 +14,7 @@ export interface NewUser {
     email: string;
     phone_number: string;
     password: string;
+    role?: string;
 }
 
 // update user type
@@ -21,4 +23,6 @@ export interface UpdateUser {
     last_name?: string;
     phone_number?: string;
     password: string;
+    role?: string;
 }
+
